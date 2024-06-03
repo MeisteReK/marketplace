@@ -30,10 +30,10 @@ class ProductController extends Controller
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
-            'image' => 'nullable|image'
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        $product = new Product($request->all());
+        $product = new Product($request->except('image'));
         $product->user_id = Auth::id();
 
         if ($request->hasFile('image')) {
@@ -61,14 +61,14 @@ class ProductController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'price' => 'required|numeric',
-                'image' => 'nullable|image'
+                'image' => 'nullable|image|max:2048'
             ]);
-
-            $product->update($request->all());
 
             if ($request->hasFile('image')) {
                 $product->image = $request->file('image')->store('images', 'public');
             }
+
+            $product->update($request->except('image'));
 
             return redirect()->route('products.index')->with('success', 'Product updated successfully.');
         } else {
